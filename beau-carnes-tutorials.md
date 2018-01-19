@@ -794,41 +794,249 @@ fish.type = "Fishes";
 fish.displayType();
 ```
 
-## 24. Objects, part 2
+## 24. Objects, part 2 ✔
 ### Learn more about objects. This video covers using objects for lookups, removing properties using delete, testing for properties, accessing and modifying nested objects, and creating an array of all object keys.
 1/10/2018
 
 ```js
-// NEED TO TYPE IN THE CODE
+// Objects: Part 2
+
+// Using Objects for Lookups
+var alpha = {
+  1:"Z",
+  2:"Y",
+  3:"X",
+  4:"W"
+  // ...
+};
+console.log(alpha[2]);
+
+  // Remove Object Properties
+let dishes = {
+  plates: 8,
+  cups: 10,
+  forks: 28,
+  bowls: 13
+};
+delete dishes.cups;
+console.log(dishes);
+
+// Testing Objects for Properties
+console.log(dishes.hasOwnProperty('plates'));
+console.log(dishes.hasOwnProperty('cups'));
+
+// Accessing and Modifying Nested Objects
+var ourStorage = {
+  "desk": {
+    "drawer": "stapler"
+  },
+  "cabinet": {
+    "top drawer": {
+      "folder1": "a file",
+      "folder2": "secrets"
+    },
+    "bottom drawer": "soda"
+  }
+};
+console.log(ourStorage.cabinet["top drawer:].folder2);
+console.log(ourStorage.desk.drawer);
+
+ourStorage.cabinet["top drawer"].folder2 = "cake recipe";
+console.log(ourStorage.cabinet["top drawer"].folder2);
+
+// Generate an Array of All Object Keys
+console.log(Object.keys(ourStorage));
 ```
 
 ## 25. AJAX
 ### AJAX in allows allows you to update parts of a web page without reloading the entire page.
+1/19/2018
+
+```html
+<h1>AJAX with JavaScript!</h1>
+<p id="demo">Let AJAX change this text</p> 
+<button type="button" onclick="loadDoc()">Change Content</button>
+```
 
 ```js
+// AJAX = Asynchronous JavaScript And XML
 
+function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+     document.getElementById("demo").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "https://cors-anywhere.herokuapp.com/http://carnes.cc/code/ajax_example.txt", true);
+  xhttp.send();
+}
+
+/* 
+Adding "https://cors-anywhere.herokuapp.com/" prevents the following error:
+
+XMLHttpRequest cannot load http://carnes.cc/code/ajax_example.txt. No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'https://s.codepen.io' is therefore not allowed access.
+*/
 ```
 
 ## 26. JSON
 ### JSON stands for JavaScript Object Notation. It is a syntax for storing and exchanging data.
 
 ```js
+//JS Nuggets: JSON
+
+// example
+var myJSON = {
+    "name": {
+        "first": "Beau",
+        "last": "Carnes"
+    },
+    "age":33,
+    "skills": [ "juggling", "stiltwalking", "coding" ],
+    "married": true,
+    "superpowers": null
+ }
+
+// stringify method
+var stringified = JSON.stringify(myJSON);
+console.log(stringified);
+
+
+// parse method
+var stringJSON = '{ "name":"Beau", "kids":2,"state":"Michigan"}';
+var myParse = JSON.parse(stringJSON);
+console.log(myParse);
 
 ```
 
-## 27. this
-### The keyword ‘this’ refers to the object that “owns” the JavaScript code.
-
-```js
-
-```
-
-## 28. Closures
+## 27. Closures
 ### A closure is the combination of a function and the environment where the function is declared.
+1/19/2018
 
 ```js
+// JS Nuggets: Closures
 
+function makeFunc() {
+  var name = "JS Nuggets";
+  function displayName() {
+    console.log(name);
+  }
+  return displayName;
+}
+
+var myFunc = makeFunc();
+myFunc();
+
+
+var counter = (function() {
+  var privateCounter = 0;
+  function changeBy(val) {
+    privateCounter += val;
+  }
+  return {
+    increment: function() {
+      changeBy(1);
+    },
+    decrement: function() {
+      changeBy(-1);
+    },
+    value: function() {
+      return privateCounter;
+    }
+  };   
+})();
+
+console.log(counter.value());
+counter.increment();
+counter.increment();
+console.log(counter.value()); 
+counter.decrement();
+console.log(counter.value());
 ```
+
+
+## 28. this
+### The keyword ‘this’ refers to the object that “owns” the JavaScript code.
+1/19/2018
+
+```js
+/* THIS */
+
+console.log(this.document === document);
+
+console.log(this === window);
+
+this.a = 37;
+console.log(window.a); 
+
+
+function f1() {
+  'use strict';
+  return this;
+}
+console.log(f1() === window);
+
+
+
+function add(c, d) {
+  return this.a + this.b + c + d;
+}
+
+var o = {a: 1, b: 3};
+console.log(add.call(o, 5, 7));
+console.log(add.apply(o, [10, 20]));
+
+
+function f() {
+  return this.a;
+}
+
+var g = f.bind({a: 'unicycle'});
+console.log(g());
+
+var h = g.bind({a: 'cereal'}); // won’t work a second time
+console.log(h());
+
+var o = {a: 8, f: f, g: g, h: h};
+console.log(o.f(), o.g(), o.h());
+
+
+var o = {
+ traditionalFunc: function () {
+   console.log('traditionalFunc this === o?', this === o);
+ },
+ arrowFunc: () => {
+   console.log('arrowFunc this === o?', this === o);
+   console.log('arrowFunc this === window?', this === window);
+ }
+};
+
+o.traditionalFunc();
+
+o.arrowFunc();
+
+
+var o = {
+  prop: 37,
+  f: function() {
+    return this.prop;
+  }
+};
+
+console.log(o.f()); // logs 37
+
+var o = {prop: 23};
+
+function independent() {
+  return this.prop;
+}
+
+o.f = independent;
+
+console.log(o.f());
+```
+
+
 ## 29. Promises
 ### A promise represents the eventual result of an asynchronous operation.
 
