@@ -1036,30 +1036,146 @@ o.f = independent;
 console.log(o.f());
 ```
 
-
 ## 29. Promises
 ### A promise represents the eventual result of an asynchronous operation.
+1/20/2018
 
 ```js
+// JS Nuggets: Promises
 
+// Basic usage
+var p = new Promise(function(resolve, reject) {
+	
+	// Do an async task async task and then...
+
+	if(good_condition) {
+		resolve('Success!');
+	}
+	else {
+		reject('Failure!');
+	}
+});
+
+p.then(function() { 
+	/* do something with the result */
+}).catch(function() {
+	/* error */
+})
+
+
+// Complete example
+
+var promiseCount = 0;
+
+function testPromise() {
+  var thisPromiseCount = ++promiseCount;
+  console.log(thisPromiseCount + ': Started - Sync code started');
+
+  var p1 = new Promise(function(resolve, reject) {
+    console.log(thisPromiseCount + ': Promise started - Async code started');
+    // This is only an example to create asynchronism
+    window.setTimeout(
+      function() {
+        resolve(thisPromiseCount);
+      }, Math.random() * 2000 + 1000);
+  });
+
+  p1.then(function(val) {
+    console.log(val + ': Promise fulfilled - Async code terminated');
+  }).catch(function(reason) {
+    console.log('Handle rejected promise ('+reason+') here.');
+  });
+
+  console.log(thisPromiseCount + ': Promise made - Sync code terminated');
+}
+
+testPromise();
+testPromise();
+testPromise();
 ```
 
 ## 30. Desktop Notifications
 ### The Notifications API lets a web page or app send notifications that are displayed outside the page at the system level. This lets web apps send information to a user even if the application is idle or in the background.
+1/20/2018
 
 ```js
+// JS Nuggets: Notifications API
 
+//Notification.requestPermission();
+
+//new Notification("Subscribe to JS Nuggets!");
+
+function notifyMe() {
+  if (!("Notification" in window)) {
+    alert("This browser does not support system notifications");
+  }
+  else if (Notification.permission === "granted") {
+    notify();
+  }
+  else if (Notification.permission !== 'denied') {
+    Notification.requestPermission(function (permission) {
+      if (permission === "granted") {
+        notify();
+      }
+    });
+  }
+  
+  function notify() {
+    var notification = new Notification('TITLE OF NOTIFICATION', {
+      icon: 'http://carnes.cc/jsnuggets_avatar.jpg',
+      body: "Hey! You are on notice!",
+    });
+
+    notification.onclick = function () {
+      window.open("http://carnes.cc");      
+    };
+    setTimeout(notification.close.bind(notification), 7000); 
+  }
+
+}
+notifyMe();
 ```
 
 ## 31. Immediately Invoked Function Expression
 ### An Immediately Invoked Function Expression (IIFE) is a JavaScript function that runs as soon as it is defined.
+1/20/2018
 
 ```js
+/* Immediately Invoked Function Expression (IIFE)  */
 
+(function () {
+  console.log("My favorite number is 3");
+})();
+
+(favNumber = function (num = 3) {
+  console.log("My favorite number is " + num);
+})();
+
+favNumber(5);
+
+
+var a = 2;
+
+(function() {
+  var a = 3;
+  console.log(a);
+})();
+
+console.log(a);
+
+let b = 2;
+
+{
+  let b = 3;
+  console.log(b);
+}
+
+console.log(b);
 ```
 
 ## 32. Strict Mode
 ### “use strict” — Strict mode in JavaScript tightens the rules for certain behaviors. You can execute JavaScript code in strict mode by using the “use strict” directive.
+1/20/2018
 
 ```js
 
