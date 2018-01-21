@@ -1178,35 +1178,185 @@ console.log(b);
 1/20/2018
 
 ```js
+"use strict";
+/* Strict Mode */
 
+function myFunction() {
+  "use strict";
+	var y = 3.14;  
+}
+
+// CONVERTING MISTAKES INTO ERRORS
+
+var x = 3.14;
+delete x;   
+
+var obj = {};
+Object.defineProperty(obj, "x", {value:0, writable:false});
+obj.x = 3.14;
+
+var obj = {get x() {return 0} };
+obj.x = 3.14;
+
+delete Object.prototype;
+
+function sum(a, a, c) { 
+  'use strict';
+  return a + b + c; 
+}
+
+
+// WITH AND EVAL CHANGES
+
+var x = 17;
+with (obj) {
+  x; // Is this var x or obj.x?
+}
+
+eval("var x;")
+
+var x = 17;
+var evalX = eval("'use strict'; var x = 42; x;");
+console.assert(x === 17);
+console.assert(evalX === 42);
+
+
+// SECURING JAVASCRIPT
 ```
 
 ## 33. Check if a property is in an object
 ###How do you check if a property is in an object in JavaScript? Learn three ways in this video. Two of the ways are ‘in’ and ‘hasOwnProperty’.
+1/21/2018
 
 ```js
+// JS Nuggets: Check if a property is in an object
 
+var myObject = {
+  name: 'JS Nuggets'
+};
+
+if (myObject.name) {
+  console.log("it is in!")
+}
+
+console.log(myObject.hasOwnProperty('name'));
+console.log('name' in myObject);
+
+console.log(myObject.hasOwnProperty('valueOf'));
+console.log('valueOf' in myObject);
 ```
 
 ## 34. setInterval and setTimeout: timing events
 ### setTimeout and setInterval are timing events in JavaScript that both allow execution of code at specified time intervals. This quick tutorial shows how to use them.
+1/21/2018
+
+```html
+<button onclick="clearInterval(intId)">Stop time</button>
+```
 
 ```js
+/* setTimeout and setInterval */
 
+// setTimeout
+var timeoutID = setTimeout(bye, 3000);
+
+console.log('hello');
+
+clearTimeout(timeoutID);
+
+function bye() {
+  console.log('goodbye');
+}
+
+
+// setInterval
+
+var count = 0
+var intId = setInterval(counter, 1000);
+ 
+function counter() {
+  console.log(++count);
+}
 ```
 
 ## 35. try, catch, finally, throw — error handling in JavaScript
 ### Error handling in JavaScript uses the keywords: try, catch, finally, and throw.
+1/21/2018
 
 ```js
+/* Try, catch, finally */
 
+try {
+  console.log('Start of try runs');
+  
+  unicycle;
+
+  console.log('End of try runs -- never reached'); 
+
+} catch(err) {
+
+  console.log('Error has occured: ' + err); 
+
+} finally {
+  console.log('This is always run'); 
+}
+
+console.log('...Then the execution continues');
+
+
+
+
+let json = '{ "age": 30 }';
+ 
+try {
+ 
+  let user = JSON.parse(json); 
+  if (!user.name) {
+    throw new SyntaxError("Incomplete data: no name");
+  }
+ 
+  console.log( user.name );
+ 
+} catch(e) {
+  console.log( "JSON Error: " + e ); 
+}
 ```
 
 ## 36. Dates
 ### Work with dates in JavaScript.
+1/21/2018
 
 ```js
+/* Dates */
 
+var d1 = new Date()
+console.log(d1.toTimeString())
+
+var d2 = new Date(2017, 1, 3, 42, 43, 23, 23)
+console.log(d2.toString())
+
+var d3 = new Date(929397621000)
+console.log(d3.toString())
+
+var d4 = new Date("March 25 2017")
+console.log(d4.toString())
+
+console.log(d4.getDay())
+d4.setYear(2020)
+console.log(d4.toString())
+
+var start = new Date();
+doSomething();
+var end = new Date();
+
+var elapsed = end.getTime() - start.getTime();
+console.log(elapsed);
+
+function doSomething() {
+    for(var i = 0; i < 1000000000; i++) {
+
+    }
+};
 ```
 
 #ES6 Basics (complete course)
