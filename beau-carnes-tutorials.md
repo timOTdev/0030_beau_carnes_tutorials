@@ -1360,10 +1360,13 @@ function doSomething() {
 ```
 
 #ES6 Basics (complete course)
-[View full playlist here]()
-/////
-///// Var vs Const vs Let —Three different ways to declare variables.
-/////
+[View full playlist here](https://www.youtube.com/playlist?list=PLWKjhJtqVAbljtmmeS0c-CEl2LdE-eR_F)
+
+## Var vs Const vs Let ️️️️️️️️✔️️
+### Three different ways to declare variables.
+1/22/2018
+
+```js
 // JS Nuggets: Const vs Let vs Var
 
 // const - for values that never change
@@ -1388,10 +1391,13 @@ for(var j = 0; j < 3; j++) {
   console.log(j);
 }
 console.log(j)
+```
 
-/////
-///// Classes — Learn about class expressions, class declarations, and inheritance / extending.
-/////
+## Classes
+### Learn about class expressions, class declarations, and inheritance / extending.
+1/22/2018
+
+```js
 //**JS Nuggets: Classes**
 
 //**class declaration**
@@ -1451,10 +1457,13 @@ var Person3 = class Person {
     this.age = age;
   }
 };
+```
 
-/////
-///// Symbols —Symbols are a unique immutable data type.
-/////
+## Symbols
+### Symbols are a unique immutable data type.
+1/22/2018
+
+```js
 // JS Nuggets: Symbols
 
 // Creation
@@ -1500,7 +1509,4 @@ function getComplement(color) {
             throw new Exception('Unknown color: '+color);
     }
 }
-
-/////
-///// Template Literals — Template literals are string literals allowing embedded expressions. These are surrounded by backticks ``.
-/////
+```
