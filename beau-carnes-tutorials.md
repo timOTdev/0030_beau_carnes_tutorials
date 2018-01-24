@@ -1510,3 +1510,231 @@ function getComplement(color) {
     }
 }
 ```
+
+## Tepmlate Literals
+### Template literals are string literals allowing embedded expressions. These are surrounded by backticks ``.
+1/23/2018
+
+```js
+// JS Nuggets: Template Literals
+
+// multi-line strings
+console.log(`string text line 1 string text line2`)
+
+// expression interpolation
+var a = 5;
+var b = 10;
+console.log(`Fifteen is ${a + b} and \nnot ${2 * a + b}.`)
+
+// Tagged template literals
+function tag(strings, ...values) {
+  console.log(strings);
+  console.log(values);
+
+  return "JS Nuggets";
+}
+
+console.log(tag`Hello ${a+b} world ${a * b});
+```
+
+## Proxies 
+### Proxies are used in to give objects custom behavior. One use is for data validation.
+1/24/2018
+
+```js
+// JS Nuggets: Proxies!
+
+// Syntax: var p = new Proxy(target, handler);
+
+// Example 1
+var handler = {
+  get (target, key) {
+    return key in target ? target[key] : 37;
+    }
+};
+
+var p = new Proxy({}, handler);
+p.a = 1;
+p.b = undefined;
+
+console.log(p.a, p.b);
+console.log('c' in p, p.c);
+
+// Example 2
+let validator = {
+  set: function(obj, prop, value) {
+    if (prop === 'age') {
+      if (typeof value !== 'number' || Number.isNaN(value)) {
+        console.log('Age must be a number')
+      }
+      if (value < 0) {
+        console.log('Age must be a positive number')
+      }
+    }
+
+    obj[prop] = value;
+  
+    return true;
+  }
+};
+
+let person = new Proxy({}, validator);
+person.age = 'young';
+console.log(person.age)
+person.age = -30;
+person.age = 100;
+console.log(person.age)
+```
+
+## …spread operator and rest operator 
+### The spread operator (…) spreads out the elements of an array (or iterable object). The rest operator condenses elements.
+1/24/2018
+
+```js
+/* Spread Operator / Rest Operator */
+
+// add the elements of an existing array into a new array
+var certsToAdd = ['Algorithms and Data Structures', 'Front End Libraries']; 
+var certifications = ['Responsive Web Design', ...certsToAdd, 'Data Visualization', 'APIs and Microservices', 'Quality Assurance and Information Security'];
+console.log(certifications);
+
+// pass elements of an array as arguments to a function
+function addThreeNumbers(x, y, z) { 
+	console.log(x+y+z)
+}
+var args = [0, 1, 2, 3];
+addThreeNumbers(...args);
+
+// copy arrays
+var arr = [1, 2, 3];
+var arr2 = [...arr]; // like arr.slice()
+arr2.push(4); 
+console.log(arr);
+console.log(arr2);
+
+
+// concatenate arrays
+var arr1 = [0, 1, 2];
+var arr2 = [3, 4, 5];
+//arr1.concat(arr2);
+arr1 = [...arr1, "freeCodeCamp", ...arr2];
+console.log(arr1);
+
+
+// REST: condense multiple elements into an array
+function multiply(multiplier, ...theArgs) {
+  return theArgs.map(function(element) {
+    return multiplier * element;
+  });
+}
+
+var arr = multiply(2, 1, 2, 3); 
+console.log(arr)
+```
+
+## Arrow Functions
+### An arrow function in ES6 has a shorter syntax than a normal function and does not bind its own this.
+1/24/2018
+
+```js
+/*Arrow Functions */
+
+//Syntax
+(param1, param2) => { statements }
+(param1, param2) => expression
+(param1, param2) => { return expression; }
+
+(singleParam) => { statements }
+singleParam => { statements }
+
+() => { statements }
+() => expression
+() => { return expression; }
+
+(param1, param2, paramN) => expression 
+
+// NORMAL FUNCTION
+var multiply = function(x, y) {
+  return x * y;
+}; 
+ 
+// ARROW FUNCTION 
+var multiply = (x, y) => { return x * y };
+// or
+var multiply = (x, y) => x*y;
+
+// Example
+var materials = [
+  'Hydrogen',
+  'Helium',
+  'Lithium',
+  'Beryllium'
+];
+
+var materialsLength1 = materials.map(function(material) { 
+  return material.length;
+});
+
+var materialsLength2 = materials.map((material) => {
+  return material.length;
+});
+
+var materialsLength3 = materials.map(material => material.length);
+
+// No binding of 'this'
+function Person(){
+  this.age = 0;
+
+  setInterval(() => {
+    this.age++; // In a normal function, 'this' refers to global object, here it properly refers to the person object
+    console.log(this.age)
+  }, 3);
+}
+
+var p = new Person();
+
+// Returning object literals
+var func = () => ({foo: 1});
+
+// Line breaks
+var func = ()
+           => 1; 
+```
+
+## Destructuring
+### Destructuring assignment is special syntax for neatly assigning values taken directly from objects and arrays to variables.
+1/24/2018
+
+```js
+/* Destructuring */
+
+// Assign variables from objects
+var voxel = {x: 3.6, y: 7.4, z: 6.54 };
+
+const {x, y, z} = voxel;
+console.log(x);
+const {x : a, y : b, z : c} = voxel;
+console.log(b);
+
+// Assign variables from nested objects
+const nest = {
+  start: { x: 5, y: 6},
+  end: { x: 6, y: -9 }
+};
+const { start : { x: startX, y: startY }} = nest;
+console.log(startX);
+
+// Assign Variables from Arrays
+//const [q,,, r] = [1, 2, 3, 4, 5];
+//console.log(q, r);
+
+// Rest Operator to Reassign Array Elements
+const [q, r, ...rest] = [1, 2, 3, 4, 5];
+console.log(q, r);
+console.log(rest);
+
+// Pass an Object as a Function's Parameters
+const profileUpdate = ({ name, age }) => {
+  // do something with these variables
+}
+```
