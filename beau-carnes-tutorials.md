@@ -1632,7 +1632,7 @@ var arr = multiply(2, 1, 2, 3);
 console.log(arr)
 ```
 
-## Arrow Functions
+## Arrow Functions ✔️️
 ### An arrow function in ES6 has a shorter syntax than a normal function and does not bind its own this.
 1/24/2018
 
@@ -1737,4 +1737,128 @@ console.log(rest);
 const profileUpdate = ({ name, age }) => {
   // do something with these variables
 }
+```
+
+## Map
+### Maps are data structures that store key-value pairs. See how they work and learn about the ES6 map object.
+1/25/2018
+
+```js
+/* Maps */
+
+let myMap = function() {
+	this.collection = {};
+	this.count = 0;
+	this.size = function() {
+		return this.count;
+	};
+	this.set = function(key, value) {
+		this.collection[key] = value;
+		this.count++;
+	};
+	this.has = function(key) {
+		return (key in this.collection);
+	};
+	this.get = function(key) {
+		return (key in this.collection) ? this.collection[key] : null;
+	};
+	this.delete = function(key) {
+		if (key in this.collection) {
+			delete this.collection[key];
+			this.count--;
+		}
+	};
+	this.values = function() {
+		let result = new Array();
+		for (let key of Object.keys(this.collection)) {
+			result.push(this.collection[key]);
+		};
+		return (result.length > 0) ? result : null;
+	};
+	this.clear = function() {
+		this.collection = {};
+		this.count = 0;
+	};
+};
+
+let map = new myMap();
+map.set('arms', 2);
+map.set('fingers', 10);
+map.set('eyes', 2);
+map.set('belley button', 1);
+
+console.log(map.get('fingers'));
+console.log(map.size());
+console.log(map.values());
+
+let map2 = new Map();
+map2.has('hands');
+map2.entries();
+
+let keyObj = {},
+    keyFunc = function() {};
+
+map2.set('hello', 'string value');
+map2.set(keyObj, 'obj value');
+map2.set(keyFunc, 'func value');
+map2.set(NaN, 'NaN value')
+
+console.log(map2.size);
+
+console.log(map2.get('hello'));
+console.log(map2.get(keyObj));
+console.log(map2.get(keyFunc));
+console.log(map2.get(NaN));
+```
+
+## Import/Export (Modules) ✔️️ ️ ️
+### The import and export statements allow you to break up your code in different files or modules.
+1/25/2018
+
+```js
+/* Import / Export */
+
+// NAMED EXPORTS
+
+//------ lib.js ------
+export const sqrt = Math.sqrt;
+export function square(x) {
+    return x * x;
+}
+export function diag(x, y) {
+    return sqrt(square(x) + square(y));
+}
+
+// IMPORT PART OF A MODULE
+
+//------ main.js ------
+import { square, diag } from 'lib';
+console.log(square(11)); 
+console.log(diag(4, 3)); 
+
+
+
+// IMPORTING COMPLETE MODULE
+
+//------ main.js ------
+import * as lib from 'lib';
+console.log(lib.square(11));
+console.log(lib.diag(4, 3)); 
+
+
+// IMPORTING WITH MORE CONVENIENT ALIAS
+import {reallyReallyLongModuleMemberName as shortName}
+  from 'my-module';
+
+
+
+// SINGLE DEFAULT EXPORT
+
+//------ myFunc.js ------
+export default function () { ··· } // no semicolon!
+
+//------ main1.js ------
+import myFunc from 'myFunc';
+myFunc();
+
 ```
