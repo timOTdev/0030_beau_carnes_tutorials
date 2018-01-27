@@ -2169,3 +2169,563 @@ function newRequestModule(url) {
 const req = newRequestModule;
 inventoryTracker('apples', req, 'www.carnes.cc');
 ```
+
+## Objects
+### [Article](https://github.com/ryanmcdermott/clean-code-javascript)
+1/27/2018
+
+```js
+// Clean Code: Objects and Data Structures
+
+// Use getters and setters
+function makeBankAccount() {
+  let balance = 0;
+
+  function getBalance() {
+    return balance;
+  }
+  
+  function setBalance(amount) {
+    balance = amount;
+  }
+  
+  return {
+    getBalance,
+    setBalance
+  };
+}
+const account = makeBankAccount();
+account.setBalance(100);
+console.log(account.getBalance());
+
+
+
+// Make objects have private members
+const Employee = function(name) {
+  return {
+    getName() {
+      return name;
+    },
+  };
+};
+
+
+const employee = new Employee('John Doe');
+console.log(`Employee name: ${employee.getName()}`);
+delete employee.name;
+console.log(`Employee name: ${employee.getName()}`);
+```
+
+## Classes
+### [Article](https://github.com/ryanmcdermott/clean-code-javascript)
+1/27/2018
+
+```js
+/* Clean Code: Classes */
+
+// Prefer ES2015/ES6 classes over ES5 plain functions
+
+//BAD
+const Animal = function(age) {
+  if (!(this instanceof Animal)) {
+    throw new Error('Instantiate Animal with `new`');
+  }
+
+  this.age = age;
+};
+
+Animal.prototype.move = function move() {};
+
+const Mammal = function(age, furColor) {
+  if (!(this instanceof Mammal)) {
+    throw new Error('Instantiate Mammal with `new`');
+  }
+
+  Animal.call(this, age);
+  this.furColor = furColor;
+};
+
+Mammal.prototype = Object.create(Animal.prototype);
+Mammal.prototype.constructor = Mammal;
+Mammal.prototype.liveBirth = function liveBirth() {};
+
+const Human = function(age, furColor, languageSpoken) {
+  if (!(this instanceof Human)) {
+    throw new Error('Instantiate Human with `new`');
+  }
+
+  Mammal.call(this, age, furColor);
+  this.languageSpoken = languageSpoken;
+};
+
+Human.prototype = Object.create(Mammal.prototype);
+Human.prototype.constructor = Human;
+Human.prototype.speak = function speak() {};
+
+// GOOD
+
+class Animal {
+  constructor(age) {
+    this.age = age;
+  }
+
+  move() { /* ... */ }
+}
+
+class Mammal extends Animal {
+  constructor(age, furColor) {
+    super(age);
+    this.furColor = furColor;
+  }
+
+  liveBirth() { /* ... */ }
+}
+
+class Human extends Mammal {
+  constructor(age, furColor, languageSpoken) {
+    super(age, furColor);
+    this.languageSpoken = languageSpoken;
+  }
+
+  speak() { /* ... */ }
+}
+
+
+
+// Use method chaining
+
+// BAD
+class Car {
+  constructor() {
+    this.make = 'Honda';
+    this.model = 'Accord';
+    this.color = 'white';
+  }
+
+  setMake(make) {
+    this.make = make;
+  }
+
+  setModel(model) {
+    this.model = model;
+  }
+
+  setColor(color) {
+    this.color = color;
+  }
+
+  save() {
+    console.log(this.make, this.model, this.color);
+  }
+}
+
+const car = new Car();
+car.setColor('pink');
+car.setMake('Ford');
+car.setModel('F-150');
+car.save();
+
+//GOOD
+class Car {
+  constructor() {
+    this.make = 'Honda';
+    this.model = 'Accord';
+    this.color = 'white';
+  }
+
+  setMake(make) {
+    this.make = make;
+    // NOTE: Returning this for chaining
+    return this;
+  }
+
+  setModel(model) {
+    this.model = model;
+    // NOTE: Returning this for chaining
+    return this;
+  }
+
+  setColor(color) {
+    this.color = color;
+    // NOTE: Returning this for chaining
+    return this;
+  }
+
+  save() {
+    console.log(this.make, this.model, this.color);
+    // NOTE: Returning this for chaining
+    return this;
+  }
+}
+
+const car = new Car()
+  .setColor('pink')
+  .setMake('Ford')
+  .setModel('F-150')
+  .save();
+
+// Prefer composition over inheritance
+
+// BAD
+class Employee {
+  constructor(name, email) {
+    this.name = name;
+    this.email = email;
+  }
+
+  // ...
+}
+
+// Bad because Employees "have" tax data. EmployeeTaxData is not a type of Employee
+class EmployeeTaxData extends Employee {
+  constructor(ssn, salary) {
+    super();
+    this.ssn = ssn;
+    this.salary = salary;
+  }
+
+  // ...
+}
+
+//GOOD
+class EmployeeTaxData {
+  constructor(ssn, salary) {
+    this.ssn = ssn;
+    this.salary = salary;
+  }
+
+  // ...
+}
+
+class Employee {
+  constructor(name, email) {
+    this.name = name;
+    this.email = email;
+  }
+
+  setTaxData(ssn, salary) {
+    this.taxData = new EmployeeTaxData(ssn, salary);
+  }
+  // ...
+}
+```
+
+## SOLID
+### [Article](https://github.com/ryanmcdermott/clean-code-javascript)
+1/27/2018
+
+```js
+/* Clean Code: S.O.L.I.D. */
+
+// **Single Responsibility Principle**
+
+//Bad
+
+class UserSettings {
+  constructor(user) {
+    this.user = user;
+  }
+
+  changeSettings(settings) {
+    if (this.verifyCredentials()) {
+      // ...
+    }
+  }
+
+  verifyCredentials() {
+    // ...
+  }
+}
+
+//Good
+
+class UserAuth {
+  constructor(user) {
+    this.user = user;
+  }
+
+  verifyCredentials() {
+    // ...
+  }
+}
+
+
+class UserSettings {
+  constructor(user) {
+    this.user = user;
+    this.auth = new UserAuth(user);
+  }
+
+  changeSettings(settings) {
+    if (this.auth.verifyCredentials()) {
+      // ...
+    }
+  }
+}
+
+
+// **Open/Closed Principle**
+
+// BAD
+var iceCreamFlavors=["chocolate","vanilla"];
+var iceCreamMaker={
+ makeIceCream (flavor) {
+  if(iceCreamFlavors.indexOf(flavor)>-1){
+   console.log("Great success. You now have ice cream.")
+  }else{
+   console.log("Epic fail. No ice cream for you.")
+  }
+ }
+}
+export default iceCreamMaker;
+
+// GOOD
+var iceCreamFlavors=["chocolate","vanilla"];
+var iceCreamMaker={
+ makeIceCream (flavor) {
+  if(iceCreamFlavors.indexOf(flavor)>-1){
+   console.log("Great success. You now have ice cream.")
+  }else{
+   console.log("Epic fail. No ice cream for you.")
+  }
+ }
+ addFlavor(flavor){
+  iceCreamFlavors.push(flavor);
+ }
+}
+export default iceCreamMaker;
+
+
+// **Liskov Substitution Principle**
+
+// BAD
+
+class Rectangle {
+  constructor() {
+    this.width = 0;
+    this.height = 0;
+  }
+
+  setColor(color) {
+    // ...
+  }
+
+  render(area) {
+    // ...
+  }
+
+  setWidth(width) {
+    this.width = width;
+  }
+
+  setHeight(height) {
+    this.height = height;
+  }
+
+  getArea() {
+    return this.width * this.height;
+  }
+}
+
+class Square extends Rectangle {
+  setWidth(width) {
+    this.width = width;
+    this.height = width;
+  }
+
+  setHeight(height) {
+    this.width = height;
+    this.height = height;
+  }
+}
+
+function renderLargeRectangles(rectangles) {
+  rectangles.forEach((rectangle) => {
+    rectangle.setWidth(4);
+    rectangle.setHeight(5);
+    const area = rectangle.getArea(); // BAD: Returns 25 for Square. Should be 20.
+    rectangle.render(area);
+  });
+}
+
+const rectangles = [new Rectangle(), new Rectangle(), new Square()];
+renderLargeRectangles(rectangles);
+
+
+// GOOD
+
+class Shape {
+  setColor(color) {
+    // ...
+  }
+
+  render(area) {
+    // ...
+  }
+}
+
+class Rectangle extends Shape {
+  constructor(width, height) {
+    super();
+    this.width = width;
+    this.height = height;
+  }
+
+  getArea() {
+    return this.width * this.height;
+  }
+}
+
+class Square extends Shape {
+  constructor(length) {
+    super();
+    this.length = length;
+  }
+
+  getArea() {
+    return this.length * this.length;
+  }
+}
+
+function renderLargeShapes(shapes) {
+  shapes.forEach((shape) => {
+    const area = shape.getArea();
+    shape.render(area);
+  });
+}
+
+const shapes = [new Rectangle(4, 5), new Rectangle(4, 5), new Square(5)];
+renderLargeShapes(shapes);
+
+
+// **Interface Segregation Principle**
+
+// BAD
+
+class DOMTraverser {
+  constructor(settings) {
+    this.settings = settings;
+    this.setup();
+  }
+
+  setup() {
+    this.rootNode = this.settings.rootNode;
+    this.animationModule.setup();
+  }
+
+  traverse() {
+    // ...
+  }
+}
+
+const $ = new DOMTraverser({
+  rootNode: document.getElementsByTagName('body'),
+  animationModule() {} // Most of the time, we won't need to animate when traversing.
+  // ...
+});
+
+// GOOD
+
+class DOMTraverser {
+  constructor(settings) {
+    this.settings = settings;
+    this.options = settings.options;
+    this.setup();
+  }
+
+  setup() {
+    this.rootNode = this.settings.rootNode;
+    this.setupOptions();
+  }
+
+  setupOptions() {
+    if (this.options.animationModule) {
+      // ...
+    }
+  }
+
+  traverse() {
+    // ...
+  }
+}
+
+const $ = new DOMTraverser({
+  rootNode: document.getElementsByTagName('body'),
+  options: {
+    animationModule() {}
+  }
+});
+
+// **Dependency Inversion Principle**
+
+// BAD
+
+class InventoryRequester {
+  constructor() {
+    this.REQ_METHODS = ['HTTP'];
+  }
+
+  requestItem(item) {
+    // ...
+  }
+}
+
+class InventoryTracker {
+  constructor(items) {
+    this.items = items;
+
+    // BAD: We have created a dependency on a specific request implementation.
+    // We should just have requestItems depend on a request method: `request`
+    this.requester = new InventoryRequester();
+  }
+
+  requestItems() {
+    this.items.forEach((item) => {
+      this.requester.requestItem(item);
+    });
+  }
+}
+
+const inventoryTracker = new InventoryTracker(['apples', 'bananas']);
+inventoryTracker.requestItems();
+
+// GOOD
+
+class InventoryTracker {
+  constructor(items, requester) {
+    this.items = items;
+    this.requester = requester;
+  }
+
+  requestItems() {
+    this.items.forEach((item) => {
+      this.requester.requestItem(item);
+    });
+  }
+}
+
+class InventoryRequesterV1 {
+  constructor() {
+    this.REQ_METHODS = ['HTTP'];
+  }
+
+  requestItem(item) {
+    // ...
+  }
+}
+
+class InventoryRequesterV2 {
+  constructor() {
+    this.REQ_METHODS = ['WS'];
+  }
+
+  requestItem(item) {
+    // ...
+  }
+}
+
+// By constructing our dependencies externally and injecting them, we can easily
+// substitute our request module for a fancy new one that uses WebSockets.
+const inventoryTracker = new InventoryTracker(['apples', 'bananas'], new InventoryRequesterV2());
+inventoryTracker.requestItems();
+```
