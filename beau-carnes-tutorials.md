@@ -2729,3 +2729,241 @@ class InventoryRequesterV2 {
 const inventoryTracker = new InventoryTracker(['apples', 'bananas'], new InventoryRequesterV2());
 inventoryTracker.requestItems();
 ```
+
+## Testing, Concurrency, & Error Handling
+### [Article](https://github.com/ryanmcdermott/clean-code-javascript)
+1/28/2018
+
+```js
+/* Clean Code: Testing, Concurrency, & Error Handling */
+
+/* TESTING */
+// Single concept per test
+
+// BAD
+import assert from 'assert';
+
+describe('MakeMomentJSGreatAgain', () => {
+  it('handles date boundaries', () => {
+    let date;
+
+    date = new MakeMomentJSGreatAgain('3/1/2017');
+    date.addDays(30);
+    assert.equal('3/31/2017', date);
+
+    date = new MakeMomentJSGreatAgain('2/1/2016');
+    date.addDays(28);
+    assert.equal('02/29/2016', date);
+
+    date = new MakeMomentJSGreatAgain('2/1/2017');
+    date.addDays(28);
+    assert.equal('03/01/2017', date);
+  });
+});
+
+// GOOD
+import assert from 'assert';
+
+describe('MakeMomentJSGreatAgain', () => {
+  it('handles 30-day months', () => {
+    const date = new MakeMomentJSGreatAgain('3/1/2017');
+    date.addDays(30);
+    assert.equal('3/31/2017', date);
+  });
+
+  it('handles leap year', () => {
+    const date = new MakeMomentJSGreatAgain('2/1/2016');
+    date.addDays(28);
+    assert.equal('02/29/2016', date);
+  });
+
+  it('handles non-leap year', () => {
+    const date = new MakeMomentJSGreatAgain('2/1/2017');
+    date.addDays(28);
+    assert.equal('03/01/2017', date);
+  });
+});
+
+/* CONCURRENCY */
+// Use ES6 Promises, not callbacks
+
+// BAD
+import { get } from 'request';
+import { writeFile } from 'fs';
+
+get('https://en.wikipedia.org/wiki/FreeCodeCamp', (requestErr, response) => {
+  if (requestErr) {
+    console.error(requestErr);
+  } else {
+    writeFile('article.html', response.body, (writeErr) => {
+      if (writeErr) {
+        console.error(writeErr);
+      } else {
+        console.log('File written');
+      }
+    });
+  }
+});
+
+// GOOD
+import { get } from 'request';
+import { writeFile } from 'fs';
+
+get('https://en.wikipedia.org/wiki/FreeCodeCamp')
+  .then((response) => {
+    return writeFile('article.html', response);
+  })
+  .then(() => {
+    console.log('File written');
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
+// ES8 Async/Await are even cleaner than Promises
+
+// BAD
+import { get } from 'request-promise';
+import { writeFile } from 'fs-promise';
+
+get('https://en.wikipedia.org/wiki/FreeCodeCamp')
+  .then((response) => {
+    return writeFile('article.html', response);
+  })
+  .then(() => {
+    console.log('File written');
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
+// GOOD
+import { get } from 'request-promise';
+import { writeFile } from 'fs-promise';
+
+async function getCleanCodeArticle() {
+  try {
+    const response = await get('https://en.wikipedia.org/wiki/FreeCodeCamp');
+    await writeFile('article.html', response);
+    console.log('File written');
+  } catch(err) {
+    console.error(err);
+  }
+}
+
+/* ERROR HANDLING */
+// Don't ignore caught errors
+
+// BAD
+try {
+  functionThatMightThrow();
+} catch (error) {
+  console.log(error);
+}
+
+// GOOD
+try {
+  functionThatMightThrow();
+} catch (error) {
+  // One option (more noisy than console.log):
+  console.error(error);
+  // Another option:
+  notifyUserOfError(error);
+  // Another option:
+  reportErrorToService(error);
+  // OR do all three!
+}
+```
+
+## Formatting and Commenting
+### [Article](https://github.com/ryanmcdermott/clean-code-javascript)
+1/28/2018
+
+```js
+/* Clean Code: Formatting and Comments */
+
+/* FORMATTING */
+// Use consistent capitalization
+const DAYS_IN_WEEK = 7;
+const DAYS_IN_MONTH = 30;
+
+const songs = ['Back In Black', 'Stairway to Heaven', 'Hey Jude'];
+const artists = ['ACDC', 'Led Zeppelin', 'The Beatles'];
+
+function eraseDatabase() {}
+function restoreDatabase() {}
+
+class animal {}
+class alpaca {}
+
+// Function callers and callees should be close
+class PerformanceReview {
+  constructor(employee) {
+    this.employee = employee;
+  }
+
+  perfReview() {
+    this.getPeerReviews();
+    this.getManagerReview();
+    this.getSelfReview();
+  }
+
+  getPeerReviews() {
+    const peers = this.lookupPeers();
+    // ...
+  }
+  
+  lookupPeers() {
+    return db.lookup(this.employee, 'peers');
+  }
+
+  getManagerReview() {
+    const manager = this.lookupManager();
+  }
+  
+  lookupManager() {
+    return db.lookup(this.employee, 'manager');
+  }
+
+  getSelfReview() {
+    // ...
+  }
+}
+
+const review = new PerformanceReview(employee);
+review.perfReview();
+
+
+/* COMMENTS */
+// Only comment things that have business logic complexity
+function hashIt(data) {
+  let hash = 0;
+
+  const length = data.length;
+
+  for (let i = 0; i < length; i++) {
+    const char = data.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    // Convert to 32-bit integer
+    hash &= hash;
+  }
+}
+
+// Don't leave commented out code in your codebase
+doStuff();
+
+// Don't have journal comments
+function combine(a, b) {
+  return a + b;
+}
+
+// Avoid positional markers
+$scope.model = {
+  menu: 'foo',
+  nav: 'bar'
+};
+
+const actions = function() {
+  // ...
+};
+```
